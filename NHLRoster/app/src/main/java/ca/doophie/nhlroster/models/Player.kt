@@ -17,6 +17,11 @@ data class Player(
     var points: Int? = null
     var goals: Int? = null
     var assists: Int? = null
+    var hits: Int? = null
+    var penaltyMinutes: Int? = null
+    var faceOffWins: String? = null
+    var gamesPlayed: Int? = null
+    var timeOnInce: String? = null
 
 
     companion object {
@@ -37,6 +42,12 @@ data class Player(
             points = json.getInt("points")
             goals = json.getInt("goals")
             assists = json.getInt("assists")
+            hits = json.getInt("hits")
+            penaltyMinutes = json.getInt("penaltyMinutes")
+            faceOffWins = "${json.getDouble("faceOffPct")}%"
+            gamesPlayed = json.getInt("games")
+            timeOnInce = json.getString("timeOnIcePerGame")
+
         } catch (e: Exception) {
             Log.e("Player", "Failed to set details for player $name : $e")
         }

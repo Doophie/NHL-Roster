@@ -25,7 +25,7 @@ class PlayerView(view: View) : RecyclerView.ViewHolder(view) {
             itemView.number_text.text = if (value.number >= 0)
                 "# ${value.number} - "
             else
-                "# N/a - "
+                "# ?? - "
 
             if (player?.portrait == null) {
                 NHLService.getPlayerPortrait(value) {

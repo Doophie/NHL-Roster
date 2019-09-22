@@ -1,5 +1,6 @@
 package ca.doophie.nhlroster.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -39,6 +40,7 @@ class PlayerFragment(private val player: Player) : Doophragment() {
         return playerView
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -48,6 +50,11 @@ class PlayerFragment(private val player: Player) : Doophragment() {
         points_text.text = "Points: ${player.points}"
         goals_text.text = "Goals: ${player.goals}"
         assists_text.text = "Assits: ${player.assists}"
+        avg_time_on_ice_text.text = "Avg. Time on ice: ${player.timeOnInce}"
+        games_played_text.text = "Games Played: ${player.gamesPlayed}"
+        hits_text.text = "Hits: ${player.hits}"
+        penalty_minutes_text.text = "Penalty Minutes: ${player.penaltyMinutes}"
+        face_offs_text.text = "Face Off Wins: ${player.faceOffWins}"
 
         val nationality = player.nationality ?: return
         NHLService.getCountryFlag(nationality) {
