@@ -95,8 +95,10 @@ class MainActivity : AppCompatActivity() {
     // attach player fragment with transition of names
     private val onPlayerViewSelected: (PlayerView)->Unit = {
         Handler(Looper.getMainLooper()).post {
-            content_view.attach(
-                PlayerFragment(it.player!!), listOf(
+            val playerFragment = PlayerFragment(it.player!!)
+            attachedFragment = playerFragment
+            content_view.attach(playerFragment,
+                listOf(
                     TargetedTransition(attachedFragment!!, it.itemView.player_portrait, R.id.fragment_player_portrait),
                     TargetedTransition(attachedFragment!!, it.itemView.player_details, R.id.fragment_player_details)
                 ), "PlayerSelected"
