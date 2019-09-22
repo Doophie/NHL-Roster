@@ -39,13 +39,12 @@ class RosterFragment(private val roster: List<Player>, private val playerSelecte
     }
 
     private fun setUpFilter() {
-
         filtered_by_text.text = "Filtered by: ${filters[curFilterIndex]}"
         filtered_by_text.setOnClickListener {
             curFilterIndex = (curFilterIndex + 1) % filters.count()
             rosterAdapter.players = getSortedPlayers(getFilteredPlayer(roster))
             rosterAdapter.notifyDataSetChanged()
-            filtered_by_text.text = "Sorted by: ${filters[curFilterIndex]}"
+            filtered_by_text.text = "Filtered by: ${filters[curFilterIndex]}"
         }
     }
 
