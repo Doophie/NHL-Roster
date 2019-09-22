@@ -86,8 +86,8 @@ class MainActivity : AppCompatActivity() {
         NHLService.getTeamRoster(it) { players ->
             Handler(Looper.getMainLooper()).post {
                 val rosterFragment = RosterFragment(players, onPlayerViewSelected)
-                content_view.attach(rosterFragment)
                 attachedFragment = rosterFragment
+                content_view.attach(rosterFragment)
             }
         }
     }
