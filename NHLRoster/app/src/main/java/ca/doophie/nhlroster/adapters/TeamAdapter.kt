@@ -16,6 +16,9 @@ class TeamView(view: View) : RecyclerView.ViewHolder(view) {
         set(value) {
             field = value ?: return
 
+            // remove image of last cell
+            itemView.team_logo.setImageDrawable(null)
+
             itemView.name_text.text = value.name
             NHLService.getTeamLogo(value) {
                 Handler(Looper.getMainLooper()).post {
@@ -25,7 +28,7 @@ class TeamView(view: View) : RecyclerView.ViewHolder(view) {
         }
 }
 
-class TeamAdapter(private val teams: List<Team>, private val onTeamSelected:(Team)->Unit) : RecyclerView.Adapter<TeamView>() {
+class TeamAdapter(var teams: List<Team>, private val onTeamSelected:(Team)->Unit) : RecyclerView.Adapter<TeamView>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamView {
         return TeamView(LayoutInflater.from(parent.context).inflate(R.layout.list_item_team, parent, false))
     }

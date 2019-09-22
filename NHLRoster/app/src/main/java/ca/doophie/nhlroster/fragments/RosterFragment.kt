@@ -1,5 +1,6 @@
 package ca.doophie.nhlroster.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,7 @@ import ca.doophie.nhlroster.models.Player
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_roster.*
 
-class RosterFragment(private val roster: List<Player>, private val playerSelected: (PlayerView)->Unit) : Doophragment() {
+class RosterFragment(val roster: List<Player>, private val playerSelected: (PlayerView)->Unit) : Doophragment() {
 
     private var curSortingIndex = 0
     private var sortingOptions = listOf("Name", "Number", "Points -", "Points +")

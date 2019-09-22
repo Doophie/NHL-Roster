@@ -3,4 +3,6 @@
     <string name="teams">Teams</string>
     <string name="navigation_drawer_open">Reveal Teams</string>
     <string name="navigation_drawer_close">Hide Teams</string>
+    <string name="less_than"><![CDATA[<]]></string>
+    <string name="greater_than"><![CDATA[>]]></string>
 </resources>

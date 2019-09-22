@@ -18,6 +18,9 @@ class PlayerView(view: View) : RecyclerView.ViewHolder(view) {
         set(value) {
             field = value ?: return
 
+            // remove image of last cell
+            itemView.player_portrait.setImageDrawable(null)
+
             itemView.name_text.text = value.name
 
             itemView.position_text.text = "Position: ${value.pos}"

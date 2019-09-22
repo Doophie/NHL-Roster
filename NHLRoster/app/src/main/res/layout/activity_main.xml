@@ -68,4 +68,33 @@
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
+    <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/prev_season_button"
+                android:text="@string/less_than"
+                android:background="@color/colorBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/current_season_text"
+                android:textAlignment="center"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/next_season_button"
+                android:background="@color/colorBackground"
+                android:text="@string/greater_than"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

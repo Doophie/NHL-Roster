@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
-import ca.doophie.nhlroster.Helper
+import ca.doophie.nhlroster.Utils
 import ca.doophie.nhlroster.models.Player
 import ca.doophie.nhlroster.models.Team
 import org.json.JSONObject
@@ -24,7 +24,7 @@ class NHLService {
 
         fun getTeams(callback: (List<Team>)->Unit) {
             Thread {
-                val url = URL("${apiURL}teams")
+                val url = URL("${apiURL}teams?season=${Utils.selectedSeason}")
 
                 with(url.openConnection() as HttpURLConnection) {
                     requestMethod = "GET"  // optional default is GET
@@ -47,37 +47,41 @@ class NHLService {
 
         fun getTeamRoster(team: Team, callback: (List<Player>) -> Unit) {
             Thread {
-                val url = URL("${apiURL}teams/${team.id}?expand=team.roster")
+                val url = URL("${apiURL}teams/${team.id}?expand=team.roster&season=${Utils.selectedSeason}")
 
                 with(url.openConnection() as HttpURLConnection) {
                     requestMethod = "GET"  // optional default is GET
 
-                    inputStream.bufferedReader().use {
-                        val lines = it.readLines().fold("") { sum, cur -> sum + cur }
+                    try {
+                        inputStream.bufferedReader().use {
+                            val lines = it.readLines().fold("") { sum, cur -> sum + cur }
 
-                        val teams = JSONObject(lines).optJSONArray("teams") ?: return@Thread
+                            val teams = JSONObject(lines).optJSONArray("teams") ?: return@Thread
 
-                        val team = teams.optJSONObject(0)
-                        val roster = team.optJSONObject("roster")
-                        val playersJson = roster?.optJSONArray("roster") ?: return@Thread
+                            val team = teams.optJSONObject(0)
+                            val roster = team.optJSONObject("roster")
+                            val playersJson = roster?.optJSONArray("roster") ?: return@Thread
 
-                        val players = ArrayList<Player>()
-                        for (i in 0 until playersJson.length()) {
-                            val player = Player.fromJSON(playersJson.getJSONObject(i))
+                            val players = ArrayList<Player>()
+                            for (i in 0 until playersJson.length()) {
+                                val player = Player.fromJSON(playersJson.getJSONObject(i))
 
-                            players.add(player)
+                                players.add(player)
 
-                            // load in portrait for player
-                            NHLService.getPlayerPortrait(player) {
-                                player.portrait = it
+                                // load in portrait for player
+                                NHLService.getPlayerPortrait(player) {
+                                    player.portrait = it
+                                }
+
+                                //load other details for each player
+                                loadPlayerDetails(player)
+                                loadPlayerStats(player, Utils.selectedSeason)
                             }
 
-                            //load other details for each player
-                            loadPlayerDetails(player)
-                            loadPlayerStats(player)
+                            callback(players)
                         }
-
-                        callback(players)
+                    } catch (e: Exception) {
+                        Log.e("NHLService", "Failed to get roster: $e")
                     }
                 }
             }.start()
@@ -103,18 +107,9 @@ class NHLService {
             }.start()
         }
 
-        private fun loadPlayerStats(player: Player) {
+        private fun loadPlayerStats(player: Player, season: String) {
             Thread {
-                val year = Calendar.getInstance().get(Calendar.YEAR)
-                val month = Calendar.getInstance().get(Calendar.MONTH)
-
-                val seasonString = if (month >= 9) {
-                    "$year${year+1}"
-                } else {
-                    "${year-1}$year"
-                }
-
-                val url = URL("${apiURL}people/${player.id}/stats?stats=statsSingleSeason&season=$seasonString")
+                val url = URL("${apiURL}people/${player.id}/stats?stats=statsSingleSeason&season=$season")
 
                 with(url.openConnection() as HttpURLConnection) {
                     requestMethod = "GET"  // optional default is GET
@@ -142,17 +137,21 @@ class NHLService {
 
                 val canvas = Canvas(bitmap)
 
-                val svg = SVG.getFromInputStream(url.openConnection().getInputStream())
+                try {
+                    val svg = SVG.getFromInputStream(url.openConnection().getInputStream())
 
-                svg.renderToCanvas(canvas)
+                    svg.renderToCanvas(canvas)
 
-                callback(BitmapDrawable(Resources.getSystem(), bitmap))
+                    callback(BitmapDrawable(Resources.getSystem(), bitmap))
+                } catch (e: Exception) {
+                    Log.e("NHLService", "Failed to get team ${team.name} logo: $e")
+                }
             }.start()
         }
 
         fun getCountryFlag(countryCode: String, callback: (Bitmap)->Unit) {
             Thread {
-                val url = URL("https://www.countryflags.io/${Helper.getTwoDigitCountryCode(countryCode)}/shiny/64.png")
+                val url = URL("https://www.countryflags.io/${Utils.getTwoDigitCountryCode(countryCode)}/shiny/64.png")
 
                 try {
                     val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream()) ?: return@Thread
